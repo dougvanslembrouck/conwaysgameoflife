@@ -75,6 +75,46 @@
 	var ctx = c.getContext("2d");      //establish the 2d context of the canvas
 	ctx.fillStyle = "#279932";         //sets the fill style of the pixel to a nice alive green color
 
+ //test the grid size
+
+      var assert = {
+        equal: function(firstValue, secondValue) {
+          if (firstValue != secondValue)
+            throw new Error('Assert failed, ' + firstValue + ' is not equal to ' + secondValue + '.');
+        }
+      };
+
+      function addTwoNumbers(x, y) {
+        return x + y;
+      }
+
+      function testAddTwoNumbers() {
+
+        // 1. ARRANGE
+        var x = gridHeight;
+        var y = gridWidth;
+        var sum1 = 800;
+
+        // 2. ACT
+        var sum2 = addTwoNumbers(x, y);
+
+        console.log('addTwoNumbers() should 800, 400 plus 400.');
+        console.log('Expect sum2 to be ' + sum2 + '. Is it 800?');
+
+        // 3. ASSERT
+        try {
+
+          assert.equal(sum1, sum2);
+
+          console.log('Passed.');
+        } catch (error) {
+          console.log(error.message);
+        }
+
+      }
+
+      testAddTwoNumbers();
+
 	//fillRandom(); //create the starting state for the grid by filling it with random cells - lets change this to test the size of the colony
 
   fillSmall();
@@ -83,46 +123,50 @@
 
 	tick(); //call main loop
 
+
+
 	//functions
 	function tick() { //main loop
 	    console.time("loop");
 	    drawGrid();
-	    updateGrid();
+	     updateGrid();
+
 	    console.timeEnd("loop");
-	    requestAnimationFrame(tick);
+	     requestAnimationFrame(tick);
 	}
 
 	function createArray(rows) { //creates a 2 dimensional array of required height
 	    var arr = [];
+
 	    for (var i = 0; i < rows; i++) {
 	        arr[i] = [];
 	    }
 	    return arr;
 	}
 
-  	function fillSmall() { //fill the grid randomly in a small box
-  	    for (var j = 100; j < gridHeight - 100; j++) { //iterate through rows
-  	        for (var k = 100; k < gridWidth - 100; k++) { //iterate through columns
-  	            currentGrid[j][k] = Math.round(Math.random());
-  	        }
-  	    }
-  	}
+    	function fillSmall() { //fill the grid randomly in a small box
+    	    for (var j = 100; j < gridHeight - 100; j++) { //iterate through rows
+    	        for (var k = 100; k < gridWidth - 100; k++) { //iterate through columns
+    	            currentGrid[j][k] = Math.round(Math.random());
+    	        }
+    	    }
+    	}
 
-    function fillMedium() { //fill the grid randomly in a medium box
-  	    for (var j = 25; j < gridHeight - 25; j++) { //iterate through rows
-  	        for (var k = 25; k < gridWidth - 25; k++) { //iterate through columns
-  	            currentGrid[j][k] = Math.round(Math.random());
-  	        }
-  	    }
-  	}
+      function fillMedium() { //fill the grid randomly in a medium box
+    	    for (var j = 25; j < gridHeight - 25; j++) { //iterate through rows
+    	        for (var k = 25; k < gridWidth - 25; k++) { //iterate through columns
+    	            currentGrid[j][k] = Math.round(Math.random());
+    	        }
+    	    }
+    	}
 
-    function fillLarge() { //fill the grid randomly, filling the entire canvas
-  	    for (var j = 1; j < gridHeight - 1; j++) { //iterate through rows
-  	        for (var k = 1; k < gridWidth - 1; k++) { //iterate through columns
-  	            currentGrid[j][k] = Math.round(Math.random());
-  	        }
-  	    }
-  	}
+      function fillLarge() { //fill the grid randomly, filling the entire canvas
+    	    for (var j = 1; j < gridHeight - 1; j++) { //iterate through rows
+    	        for (var k = 1; k < gridWidth - 1; k++) { //iterate through columns
+    	            currentGrid[j][k] = Math.round(Math.random());
+    	        }
+    	    }
+    	}
 
 	function drawGrid() { //draw the contents of the grid onto a canvas
       var liveCount = 0;
