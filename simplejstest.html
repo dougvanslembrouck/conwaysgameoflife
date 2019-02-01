@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+    <title>DVS - Conway's Game of Life Coding Challenge Submission</title>
+
+  </head>
+  <body>
+
+    <div class="container" style="padding:10px;margin:10px;width:90%;">
+
+      <div class="row">
+          <div class="col-8">
+              <h3>Conway's Game of Life</h3>   <br>
+              <button type="submit"  onClick="refreshPage()">Refresh Game</button>
+              <br><br><br>
+              If a dead cell has exactly three live neighbors, it comes to life  - life is created<br><br>
+              If a live cell has less than two live neighbors, it dies    - UNDERPOPULATION<br><br>
+              If a live cell has more than three live neighbors, it dies  - OVERPOPULATION<br><br>
+              If a live cell has two or three live neighbors, it continues living - life is PRESERVED<br><br>
+          </div>
+          <div class="col-4">
+              <canvas id="theCanvas" width="400" height="400" style="border:1px solid #000000;"></canvas>
+            </div>
+      </div>
+
+    </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  </body>
+</html>
+
+
+
+<script>
+
+
+  function refreshPage(){
+      window.location.reload();
+  }
+
+//redefine the rules in a more natural language so I can understand it
+
+//this is based on the tutorial from Lance Concannon, posted 3 July 2015
+//http://jsfiddle.net/concannon/sy9py6qa/?utm_source=website&utm_medium=embed&utm_campaign=sy9py6qa
+//http://disruptive-communications.com/conwaylifejavascript/
+
+
+//If a dead cell has exactly three live neighbors, it comes to life  - life is created
+//If a live cell has less than two live neighbors, it dies    - UNDERPOPULATION
+//If a live cell has more than three live neighbors, it dies  - OVERPOPULATION
+//If a live cell has two or three live neighbors, it continues living - life is PRESERVED
+
+
+  //define the size of the grid in pixels
+  var gridHeight = 400;
+	var gridWidth = 400;
+
+  //define the 2 dimensional arrays for the grid and the swap grid
+	var currentGrid = createArray(gridWidth);     // current state of the grid
+	var newGrid = createArray(gridWidth);         // new updated state of the grid
+
+  //establish the grid
+	var c = document.getElementById("theCanvas");
+	var ctx = c.getContext("2d");      //establish the 2d context of the canvas
+	ctx.fillStyle = "#279932";         //sets the fill style of the pixel to a nice alive green color
+
+	//fillRandom(); //create the starting state for the grid by filling it with random cells - lets change this to test the size of the colony
+
+  fillSmall();
+  //fillMedium();
+  //fillLarge();
+
+	tick(); //call main loop
+
+	//functions
+	function tick() { //main loop
+	    console.time("loop");
+	    drawGrid();
+	    updateGrid();
+	    console.timeEnd("loop");
+	    requestAnimationFrame(tick);
+	}
+
+	function createArray(rows) { //creates a 2 dimensional array of required height
+	    var arr = [];
+	    for (var i = 0; i < rows; i++) {
+	        arr[i] = [];
+	    }
+	    return arr;
+	}
+
+  	function fillSmall() { //fill the grid randomly in a small box
+  	    for (var j = 100; j < gridHeight - 100; j++) { //iterate through rows
+  	        for (var k = 100; k < gridWidth - 100; k++) { //iterate through columns
+  	            currentGrid[j][k] = Math.round(Math.random());
+  	        }
+  	    }
+  	}
+
+    function fillMedium() { //fill the grid randomly in a medium box
+  	    for (var j = 25; j < gridHeight - 25; j++) { //iterate through rows
+  	        for (var k = 25; k < gridWidth - 25; k++) { //iterate through columns
+  	            currentGrid[j][k] = Math.round(Math.random());
+  	        }
+  	    }
+  	}
+
+    function fillLarge() { //fill the grid randomly, filling the entire canvas
+  	    for (var j = 1; j < gridHeight - 1; j++) { //iterate through rows
+  	        for (var k = 1; k < gridWidth - 1; k++) { //iterate through columns
+  	            currentGrid[j][k] = Math.round(Math.random());
+  	        }
+  	    }
+  	}
+
+	function drawGrid() { //draw the contents of the grid onto a canvas
+      var liveCount = 0;
+	    ctx.clearRect(0, 0, gridHeight, gridWidth); //this should clear the canvas ahead of each redraw
+	    for (var j = 1; j < gridHeight; j++) { //iterate through rows
+	        for (var k = 1; k < gridWidth; k++) { //iterate through columns
+	            if (currentGrid[j][k] === 1) {
+	                ctx.fillRect(j, k, 1, 1);
+                    liveCount++;
+
+	            }
+	        }
+	    }
+        console.log(liveCount/100);
+	}
+
+	function updateGrid() { //perform one iteration of grid update
+
+	    for (var j = 1; j < gridHeight - 1; j++) { //iterate through rows
+	        for (var k = 1; k < gridWidth - 1; k++) { //iterate through columns
+	            var totalCells = 0;
+
+
+	            //add up the total values for the surrounding cells - the 8 cells around it
+
+              //      [ ][ ][ ]
+              //      [ ][.][ ]
+              //      [ ][ ][ ]
+
+	            totalCells += currentGrid[j - 1][k - 1]; //top left      [.][ ][ ]
+	            totalCells += currentGrid[j - 1][k]; //top center        [ ][.][ ]
+	            totalCells += currentGrid[j - 1][k + 1]; //top right     [ ][ ][.]
+
+	            totalCells += currentGrid[j][k - 1]; //middle left       [.][ ][ ]
+	            totalCells += currentGrid[j][k + 1]; //middle right      [ ][ ][.]
+
+	            totalCells += currentGrid[j + 1][k - 1]; //bottom left   [ ][ ][ ]
+	            totalCells += currentGrid[j + 1][k]; //bottom center     [ ][.][ ]
+	            totalCells += currentGrid[j + 1][k + 1]; //bottom right  [ ][ ][.]
+
+
+	            //apply the rules to each cell
+	            switch (totalCells) {
+	                case 2:
+	                    newGrid[j][k] = currentGrid[j][k];
+
+	                    break;
+	                case 3:
+	                    newGrid[j][k] = 1; //live
+
+	                    break;
+	                default:
+	                    newGrid[j][k] = 0; //
+	            }
+	        }
+	    }
+
+	    //mirror edges to create wraparound effect  - this is interesting, it pushes off canvas, to wrap around the other side.
+
+	    for (var l = 1; l < gridHeight - 1; l++) { //iterate through rows
+	        //top and bottom
+	        newGrid[l][0] = newGrid[l][gridHeight - 3];
+	        newGrid[l][gridHeight - 2] = newGrid[l][1];
+	        //left and right
+	        newGrid[0][l] = newGrid[gridHeight - 3][l];
+	        newGrid[gridHeight - 2][l] = newGrid[1][l];
+
+	    }
+
+
+	    //swap grids - this is the main iteration
+	    var temp = currentGrid;
+	    currentGrid = newGrid;
+	    newGrid = temp;
+	}
+
+  </script>
