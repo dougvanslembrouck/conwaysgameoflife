@@ -19,3 +19,10 @@ This example will eventually stabilize, establishing life across the canvas.
 #requirements
 Node, Yarn
 Bootstrap is referenced from the CDN
+
+#instructions
+this is self-contained.
+
+it was developed using MAMP locally
+
+pull down and then open simplejstest.html
